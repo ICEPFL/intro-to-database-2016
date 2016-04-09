@@ -13,7 +13,7 @@ CREATE TABLE Author
 
         primary key(Author_ID),
         FOREIGN KEY (Author_Language_ID)  REFERENCES Language(Language_ID);
-        FOREIGN KEY (Author_Image)        REFERENCES Webpages(URL);
+        FOREIGN KEY (Author_Image)        REFERENCES Webpages(URL));
 
 CREATE TABLE WRITES
     (   pa_ID               INTEGER,
@@ -84,14 +84,14 @@ CREATE TABLE Title(
     FOREIGN KEY (Tag_ID)            REFERENCES Tags(Tag_ID),
     FOREIGN KEY (Note_ID)           REFERENCES Note(Note_ID),
     FOREIGN KEY (Title_synopsis)    REFERENCES Note(Note_ID),
-    FOREIGN KEY (Title_tsltorID)    REFERENCES Title_translator(Title_tsltorID);)
+    FOREIGN KEY (Title_tsltorID)    REFERENCES Title_translator(Title_tsltorID));
 
 CREATE TABLE Title_translator(
     Title_tsltorID      INTEGER,
     Title_tsltorName    CHAR(64),
 
-    PRIMARY KEY (Title_tsltorID);   
-)
+    PRIMARY KEY (Title_tsltorID));   
+
 
 
 
@@ -103,7 +103,7 @@ CREATE TABLE Publication_content (
 
     PRIMARY KEY (pubc_ID),
     FOREIGN KEY (Title_ID)         REFERENCES Title(Title_ID),
-    FOREIGN KEY (Publication_ID)   REFERENCES Publication(Publication_ID);)
+    FOREIGN KEY (Publication_ID)   REFERENCES Publication(Publication_ID));
 
 /* I build the publication table for convenience when connecting title and
  publication so this table is incomplete and could be incorrect. Feel free
@@ -129,7 +129,7 @@ CREATE TABLE Publication(
     FOREIGN KEY (PublisherID)       REFERENCES Publisher(PublisherID),
     FOREIGN KEY (Public_image)      REFERENCES Webpage(URL),
     FOREIGN KEY (Note_ID)           REFERENCES Note(Note_ID),
-    FOREIGN KEY (Pub_Serie_ID)      REFERENCES Publication_series(Pub_Serie_ID);)
+    FOREIGN KEY (Pub_Serie_ID)      REFERENCES Publication_series(Pub_Serie_ID));
 
 CREATE TABLE Publication_series
     (    Pub_Serie_ID    INTEGER,
@@ -156,7 +156,7 @@ CREATE TABLE Reviews(
 
     PRIMARY KEY(Rev_ID),
     FOREIGN KEY(Title_ID)    REFERENCES Title(Title_ID),
-    FOREIGN KEY(Review_ID)   REFERENCES Title(Title_ID);)
+    FOREIGN KEY(Review_ID)   REFERENCES Title(Title_ID));
 
 
 CREATE TABLE Title_series(
@@ -168,7 +168,7 @@ CREATE TABLE Title_series(
 
     PRIMARY KEY (Tit_sris_ID),
     FOREIGN KEY (Sris_parent)   REFERENCES Title_series(Sris_title),
-    FOREIGN KEY (Sris_note_ID)  REFERENCES Note(Note_ID),);
+    FOREIGN KEY (Sris_note_ID)  REFERENCES Note(Note_ID));
 
 CREATE TABLE Title_tags(
     Tagmap_ID      INTEGER,
@@ -178,7 +178,7 @@ CREATE TABLE Title_tags(
 
     PRIMARY KEY (Tagmap_ID),
     FOREIGN KEY (Tag_ID)      REFERENCES Tags(Tag_ID),
-    FOREIGN KEY (Title_ID)    REFERENCES Title(Title_ID);)
+    FOREIGN KEY (Title_ID)    REFERENCES Title(Title_ID));
 
 
 CREATE TABLE Tags(
@@ -195,7 +195,7 @@ CREATE TABLE Title_awards(
 
     PRIMARY KEY (taw_ID),
     FOREIGN KEY (Award_ID)    REFERENCES Awards(Award_ID),
-    FOREIGN KEY (Title_ID)    REFERENCES Title(Title_ID);)
+    FOREIGN KEY (Title_ID)    REFERENCES Title(Title_ID));
 
 CREATE TABLE Awards(
     Award_ID         INTEGER,
@@ -210,7 +210,7 @@ CREATE TABLE Awards(
     PRIMARY KEY (Award_ID),
     FOREIGN KEY (Award_typeID)     REFERENCES Award_types(Award_typeID),
     FOREIGN KEY (Award_cateID)     REFERENCES Award_categories(Award_cateID),
-    FOREIGN KEY (Note_ID)          REFERENCES Note(Note_ID); )
+    FOREIGN KEY (Note_ID)          REFERENCES Note(Note_ID) );
 
 CREATE TABLE Award_categories(
     Award_cateID         INTEGER,
@@ -221,7 +221,7 @@ CREATE TABLE Award_categories(
     Note_ID              INTEGER,
 
     PRIMARY KEY (Award_cateID),
-    FOREIGN KEY (Note_ID)        REFERENCES Note(Note_ID);)
+    FOREIGN KEY (Note_ID)        REFERENCES Note(Note_ID));
 
 CREATE TABLE Award_types(
     Award_typeID         INTEGER,
@@ -236,4 +236,4 @@ CREATE TABLE Award_types(
     Note_ID              INTEGER,
 
     PRIMARY KEY (Award_typeID),
-    FOREIGN KEY (Note_ID) REFERENCES Note(Note_ID);)
+    FOREIGN KEY (Note_ID) REFERENCES Note(Note_ID));
