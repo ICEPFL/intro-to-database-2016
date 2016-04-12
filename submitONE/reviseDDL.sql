@@ -21,11 +21,11 @@ CREATE TABLE Tags(
 CREATE TABLE Title_series(
     Tit_sris_ID        INTEGER,
     Sris_title         VARCHAR(128),
-    Sris_parent        VARCHAR(128),
+    Sris_parent        INTEGER,
     Sris_noteID        INTEGER,
 
     PRIMARY KEY (Tit_sris_ID),
-    FOREIGN KEY (Sris_parent)   REFERENCES Title_series(Sris_title),
+    FOREIGN KEY (Sris_parent)   REFERENCES Title_series(Tit_sris_ID),
     FOREIGN KEY (Sris_noteID)   REFERENCES Note(noteID));
 
 CREATE TABLE Title(
@@ -41,7 +41,7 @@ CREATE TABLE Title(
     Language_ID         INTEGER NOT NULL,/*BUT THE DATA HAS NONE!!*/
     noteID              INTEGER,      
     Title_tsltorID      INTEGER, 
-    Series_ID           INTEGER,  
+    Tit_sris_ID         INTEGER,  
     webPageID           INTEGER, 
 
     PRIMARY KEY (Title_ID),
@@ -49,7 +49,7 @@ CREATE TABLE Title(
     FOREIGN KEY (Language_ID)       REFERENCES Language(Language_ID),
     FOREIGN KEY (noteID)            REFERENCES Note(noteID),
     FOREIGN KEY (Title_synopsis)    REFERENCES Note(noteID),
-    FOREIGN KEY (Series_ID)         REFERENCES Title_series(Tit_sris_ID));
+    FOREIGN KEY (Tit_sris_ID)         REFERENCES Title_series(Tit_sris_ID));
     
 CREATE TABLE Title_tags(
     Tagmap_ID      INTEGER, 
@@ -141,7 +141,7 @@ CREATE TABLE WEBPAGE
         Publisher_ID        INTEGER,
         Tit_sris_ID         INTEGER, 
         Award_cateID        INTEGER,
-        Award_type_ID       INTEGER,
+        Award_typeID       INTEGER,
         
         PRIMARY KEY (webPageID),
         FOREIGN KEY (Author_ID)     REFERENCES Author(Author_ID),
@@ -154,12 +154,12 @@ CREATE TABLE WEBPAGE
         
 
 CREATE TABLE Publisher
-    (   PublisherID     INTEGER,
+    (   Publisher_ID     INTEGER,
         Publisher_Name  VARCHAR(128),
         noteID          INTEGER,
         webPageID       INTEGER,
 
-        PRIMARY KEY (PublisherID),
+        PRIMARY KEY (Publisher_ID),
         FOREIGN KEY (noteID)       REFERENCES Note(noteID),
         FOREIGN KEY (webPageID)    REFERENCES WEBPAGE(webPageID));
     
@@ -179,7 +179,7 @@ CREATE TABLE Author
         webPageID           INTEGER,
 
         primary key (Author_ID),
-        FOREIGN KEY (Author_Language_ID)  REFERENCES  Language(Language_ID),
+        FOREIGN KEY (Language_ID)         REFERENCES  Language(Language_ID),
         FOREIGN KEY (webPageID)           REFERENCES  WEBPAGE(webPageID),
         FOREIGN KEY (noteID)              REFERENCES  Note(noteID));
 
@@ -195,15 +195,6 @@ CREATE TABLE Author_lang
         FOREIGN KEY (Language_name)     REFERENCES Language(Name));
 
 
-CREATE TABLE WRITES
-    (   pa_ID               INTEGER,
-        Author_ID           INTEGER,
-        Publication_ID      INTEGER,
-        
-        PRIMARY KEY (Author_ID, Publication_ID),
-        FOREIGN KEY (Author_ID)         REFERENCES Author(Author_ID),
-        FOREIGN KEY (Publication_ID)    REFERENCES Publication(Publication_ID));
-
 
 CREATE TABLE Publication(
     Publication_ID     INTEGER,
@@ -216,16 +207,25 @@ CREATE TABLE Publication(
     Price              VARCHAR(128),
     Pub_Serie_ID       INTEGER,
     Public_srisNum     INTEGER,
-    PublisherID        INTEGER,
-    Public_image       VARCHAR,  
+    Publisher_ID       INTEGER,
+    Public_image       VARCHAR(128),  
     noteID             INTEGER,
     webPageID          INTEGER,
 
     PRIMARY KEY (ISBN),
-    FOREIGN KEY (PublisherID)       REFERENCES Publisher(PublisherID),
+    FOREIGN KEY (Publisher_ID)       REFERENCES Publisher(Publisher_ID),
     FOREIGN KEY (noteID)            REFERENCES Note(noteID),
     FOREIGN KEY (Pub_Serie_ID)      REFERENCES Publication_series(Pub_Serie_ID),
     FOREIGN KEY (webPageID)         REFERENCES WEBPAGE(webPageID));
+
+CREATE TABLE WRITES
+    (   pa_ID               INTEGER,
+        Author_ID           INTEGER,
+        Publication_ID      INTEGER,
+        
+        PRIMARY KEY (Author_ID, Publication_ID),
+        FOREIGN KEY (Author_ID)         REFERENCES Author(Author_ID),
+        FOREIGN KEY (Publication_ID)    REFERENCES Publication(Publication_ID));
 
 
 CREATE TABLE Publication_content (
