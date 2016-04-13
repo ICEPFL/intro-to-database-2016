@@ -35,6 +35,8 @@ CREATE TABLE Title(
     Story_len               VARCHAR(64),
     Title_type              VARCHAR(64),
     Title_graph             VARCHAR(16),
+    translator_lang         VARCHAR(64),
+    translator_name         VARCHAR(128),
     
     Title_synopsis      INTEGER, 
     Parent              INTEGER,
@@ -195,13 +197,15 @@ CREATE TABLE Publication(
     Pack_type          VARCHAR(128),
     Public_type        VARCHAR(128),
     ISBN               VARCHAR(128),
-    Price              VARCHAR(128),
     Pub_Serie_ID       INTEGER,
     Public_srisNum     INTEGER,
     Publisher_ID       INTEGER,
     Public_image       VARCHAR(128),  
     noteID             INTEGER,
     webPageID          INTEGER,
+    currency_sign      VARCHAR(16),
+    currency_amout     VARCHAR(64),
+
 
     PRIMARY KEY (Publication_ID),
     FOREIGN KEY (Publisher_ID)      REFERENCES Publisher(Publisher_ID),

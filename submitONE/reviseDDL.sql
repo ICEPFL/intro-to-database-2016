@@ -38,7 +38,7 @@ CREATE TABLE Title(
     
     Title_synopsis      INTEGER, 
     Parent              INTEGER,
-    Language_ID         INTEGER NOT NULL,/*BUT THE DATA HAS NONE!!*/
+    Language_ID         INTEGER,/*should be not null BUT THE DATA HAS NONE!!*/
     noteID              INTEGER,      
     Title_tsltorID      INTEGER, 
     Tit_sris_ID         INTEGER,  
@@ -49,7 +49,7 @@ CREATE TABLE Title(
     FOREIGN KEY (Language_ID)       REFERENCES Language(Language_ID),
     FOREIGN KEY (noteID)            REFERENCES Note(noteID),
     FOREIGN KEY (Title_synopsis)    REFERENCES Note(noteID),
-    FOREIGN KEY (Tit_sris_ID)         REFERENCES Title_series(Tit_sris_ID));
+    FOREIGN KEY (Tit_sris_ID)       REFERENCES Title_series(Tit_sris_ID));
     
 CREATE TABLE Title_tags(
     Tagmap_ID      INTEGER, 
@@ -141,16 +141,9 @@ CREATE TABLE WEBPAGE
         Publisher_ID        INTEGER,
         Tit_sris_ID         INTEGER, 
         Award_cateID        INTEGER,
-        Award_typeID       INTEGER,
+        Award_typeID        INTEGER,
         
-        PRIMARY KEY (webPageID),
-        FOREIGN KEY (Author_ID)     REFERENCES Author(Author_ID),
-        FOREIGN KEY (Pub_Serie_ID)  REFERENCES Publication_Serie(Pub_Serie_ID),
-        FOREIGN KEY (Publisher_ID)  REFERENCES Publisher(Publisher_ID),
-        FOREIGN KEY (Title_ID)      REFERENCES Title(Title_ID),
-        FOREIGN KEY (Tit_sris_ID)   REFERENCES Title_series(Tit_sris_ID),
-        FOREIGN KEY (Award_cateID ) REFERENCES Award_categories(Award_cateID),
-        FOREIGN KEY (Award_typeID)  REFERENCES Award_types(Award_typeID));
+        PRIMARY KEY (webPageID)       );
         
 
 CREATE TABLE Publisher
@@ -187,12 +180,10 @@ CREATE TABLE Author
 CREATE TABLE Author_lang
     (   Author_ID           INTEGER,
         Language_ID         INTEGER,
-        Language_name       VARCHAR(128),
         
         PRIMARY KEY (Author_ID, Language_ID),
         FOREIGN KEY (Author_ID)         REFERENCES Author(Author_ID),
-        FOREIGN KEY (Language_ID)       REFERENCES Language(Language_ID),
-        FOREIGN KEY (Language_name)     REFERENCES Language(Name));
+        FOREIGN KEY (Language_ID)       REFERENCES Language(Language_ID));
 
 
 
@@ -212,8 +203,8 @@ CREATE TABLE Publication(
     noteID             INTEGER,
     webPageID          INTEGER,
 
-    PRIMARY KEY (ISBN),
-    FOREIGN KEY (Publisher_ID)       REFERENCES Publisher(Publisher_ID),
+    PRIMARY KEY (Publication_ID),
+    FOREIGN KEY (Publisher_ID)      REFERENCES Publisher(Publisher_ID),
     FOREIGN KEY (noteID)            REFERENCES Note(noteID),
     FOREIGN KEY (Pub_Serie_ID)      REFERENCES Publication_series(Pub_Serie_ID),
     FOREIGN KEY (webPageID)         REFERENCES WEBPAGE(webPageID));
@@ -237,10 +228,14 @@ CREATE TABLE Publication_content (
     FOREIGN KEY (Title_ID)         REFERENCES Title(Title_ID),
     FOREIGN KEY (Publication_ID)   REFERENCES Publication(Publication_ID));
 
+/*webpage*/
+/*ALTER TABLE WEBPAGE ADD CONSTRAINT  pk_webpage     PRIMARY KEY (webPageID);*/
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Author_ID)    REFERENCES Author(Author_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Pub_Serie_ID) REFERENCES Publication_Serie(Pub_Serie_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Publisher_ID) REFERENCES Publisher(Publisher_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Title_ID)     REFERENCES Title(Title_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Tit_sris_ID)  REFERENCES Title_series(Tit_sris_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Award_cateID) REFERENCES Award_categories(Award_cateID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Award_typeID) REFERENCES Award_types(Award_typeID);
 
-
-
-
-
-
-
+      
