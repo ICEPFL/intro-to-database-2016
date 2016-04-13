@@ -96,14 +96,14 @@ CREATE TABLE Award_categories(
     noteID               INTEGER,
     Award_typeID         INTEGER NOT NULL,
 
-    PRIMARY KEY (Award_cateID, Award_typeID),
+    PRIMARY KEY (Award_cateID),
     FOREIGN KEY (Award_typeID) REFERENCES Award_types(Award_typeID) ON DELETE CASCADE,
     FOREIGN KEY (noteID)       REFERENCES Note(noteID));
     
 CREATE TABLE Awards(
     Award_ID         INTEGER,
     Award_title      VARCHAR(128),
-    Award_date       VARCHAR(64),
+    Award_date       DATE,
     
     Award_typeCode    VARCHAR(128),
     Award_typeID      INTEGER  NOT NULL,
@@ -166,8 +166,8 @@ CREATE TABLE Author
         Author_Last_Name    VARCHAR(64),
         Pseudonym           VARCHAR(128),
         Birth_Place         VARCHAR(128),
-        Birth_Date          VARCHAR(32),
-        Death_Date          VARCHAR(32),
+        Birth_Date          DATE,
+        Death_Date          DATE,
         Email_Address       VARCHAR(128),   
         Language_ID         INTEGER, 
         noteID              INTEGER,
@@ -192,7 +192,7 @@ CREATE TABLE Author_lang
 CREATE TABLE Publication(
     Publication_ID     INTEGER,
     Public_title       VARCHAR(128),
-    Public_date        VARCHAR(64),
+    Public_date        DATE,
     Public_pages       VARCHAR(128),
     Pack_type          VARCHAR(128),
     Public_type        VARCHAR(128),
@@ -234,12 +234,12 @@ CREATE TABLE Publication_content (
 
 /*webpage*/
 /*ALTER TABLE WEBPAGE ADD CONSTRAINT  pk_webpage     PRIMARY KEY (webPageID);*/
-ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Author_ID)    REFERENCES Author(Author_ID);
-ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Pub_Serie_ID) REFERENCES Publication_Serie(Pub_Serie_ID);
-ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Publisher_ID) REFERENCES Publisher(Publisher_ID);
-ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Title_ID)     REFERENCES Title(Title_ID);
-ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Tit_sris_ID)  REFERENCES Title_series(Tit_sris_ID);
-ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Award_cateID) REFERENCES Award_categories(Award_cateID);
-ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage     FOREIGN KEY (Award_typeID) REFERENCES Award_types(Award_typeID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage1     FOREIGN KEY (Author_ID)    REFERENCES Author(Author_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage2     FOREIGN KEY (Pub_Serie_ID) REFERENCES Publication_series(Pub_Serie_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage3     FOREIGN KEY (Publisher_ID) REFERENCES Publisher(Publisher_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage4     FOREIGN KEY (Title_ID)     REFERENCES Title(Title_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage5     FOREIGN KEY (Tit_sris_ID)  REFERENCES Title_series(Tit_sris_ID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage6     FOREIGN KEY (Award_cateID) REFERENCES Award_categories(Award_cateID);
+ALTER TABLE WEBPAGE ADD CONSTRAINT  fk_webpage7     FOREIGN KEY (Award_typeID) REFERENCES Award_types(Award_typeID);
 
       
