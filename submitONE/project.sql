@@ -134,11 +134,9 @@ CREATE TABLE Publisher
     (   Publisher_ID     INTEGER,
         Publisher_Name  VARCHAR(128),
         noteID          INTEGER,
-        webPageID       INTEGER,
 
         PRIMARY KEY (Publisher_ID),
-        FOREIGN KEY (noteID)       REFERENCES Note(noteID),
-        FOREIGN KEY (webPageID)    REFERENCES WEBPAGE(webPageID));
+        FOREIGN KEY (noteID)       REFERENCES Note(noteID));
     
     
 CREATE TABLE Author
@@ -151,7 +149,7 @@ CREATE TABLE Author
         Birth_Date          DATE,
         Death_Date          DATE,
         Email_Address       VARCHAR(128), 
-        Author_image        VARCHAR(256)  
+        Author_image        VARCHAR(256),
         Language_ID         INTEGER, 
         noteID              INTEGER,
 
