@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Database Project</title>
+    </head>
+    <body>
+        <h1>Book Site</h1>
+        <a href="/">Return to Home Page</a>
+        <div id='container'></div>
+        <script id="results" type="text/json">{{{results}}}</script>
+        <script type="text/javascript">
+          console.log(document.getElementById('results').innerHTML)
+          var results = JSON.parse(document.getElementById('results').innerHTML)
+          // console.log('results: ')
+          // console.log(results)
+          var container = document.getElementById('container')
+          var table = document.createElement('table');
+          if (results && results.length > 0) {
+            var tr = document.createElement('tr');
+            Object.keys(results[0]).forEach(function(key){
+              var td = document.createElement('td');
+              var text = document.createTextNode(key);
+              td.appendChild(text);
+              tr.appendChild(td);
+            })
+            table.appendChild(tr);
+
+            results.forEach(function(record) {
+              var tr = document.createElement('tr');
+              Object.keys(record).forEach(function(key) {
+                var td = document.createElement('td');
+                var text = document.createTextNode(record[key]);
+
+                td.appendChild(text);
+                tr.appendChild(td);
+              })
+              table.appendChild(tr);
+            })
+            container.appendChild(table);
+          }
+          else {
+            var text = document.createTextNode('No record found')
+            container.appendChild(text)
+          }
+        </script>
+    </body>
+</html>

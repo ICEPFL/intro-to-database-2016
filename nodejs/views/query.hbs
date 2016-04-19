@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Database Project</title>
+    </head>
+    <body>
+        <h1>Book Site</h1>
+        <a href="/">Return to Home Page</a>
+        <div id='container'></div>
+        <script id="entries" type="text/json">{{{entries}}}</script>
+        <script type="text/javascript">
+          var entries = JSON.parse(document.getElementById('entries').innerHTML)
+          // console.log('entries: ')
+          // console.log(entries)
+          var container = document.getElementById('container')
+          var form = document.createElement('form');
+          form.action = 'query'
+          form.method = 'get'
+          Object.keys(entries).forEach(function(key){
+            var text = document.createTextNode(key + ': ');
+            var input = document.createElement('input');
+            input.name = key
+            input.type = 'text';
+
+            form.appendChild(text);
+            form.appendChild(input);
+            form.appendChild(document.createElement('br'))
+          });
+          var submit = document.createElement('input')
+          submit.type = 'submit'
+          submit.value = 'Submit'
+          form.appendChild(submit)
+          container.appendChild(form);
+        </script>
+    </body>
+</html>
