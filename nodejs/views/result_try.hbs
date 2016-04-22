@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Database Project</title>
+  <link rel = "stylesheet" type ="text/css" href = 'css/layout.css'>  
+</head>
+
+<body>
+
+  <header id="header"><p>Welcome to our database project</p></header>
+
+  <div id="container">
+
+    <main id="center" class="column">
+      <article>
+      
+        <h1>Results</h1>
+        <div id='box'></div>
+        <script id="results" type="text/json">{{{results}}}</script>
+        <script type="text/javascript">
+          console.log(document.getElementById('results').innerHTML)
+          var results = JSON.parse(document.getElementById('results').innerHTML)
+          // console.log('results: ')
+          // console.log(results)
+          var box = document.getElementById('box')
+          var table = document.createElement('table');
+          if (results && results.length > 0) {
+            var tr = document.createElement('tr');
+            Object.keys(results[0]).forEach(function(key){
+              var td = document.createElement('td');
+              var text = document.createTextNode(key);
+              td.appendChild(text);
+              tr.appendChild(td);
+            })
+            table.appendChild(tr);
+
+            results.forEach(function(record) {
+              var tr = document.createElement('tr');
+              Object.keys(record).forEach(function(key) {
+                var td = document.createElement('td');
+                var text = document.createTextNode(record[key]);
+
+                td.appendChild(text);
+                tr.appendChild(td);
+              })
+              table.appendChild(tr);
+            })
+            box.appendChild(table);
+          }
+          else {
+            var text = document.createTextNode('No record found')
+            box.appendChild(text)
+          }
+        </script>
+      </article>                
+    </main>
+
+    <nav id="left" class="column">
+      <h3>Simple search into database</h3>
+      <ul>
+        <li><a href="/queryPage?category=author">Query Author</a></li>
+        <li><a href="#">Link to query</a></li>
+        <li><a href="#">Link to query</a></li>
+        <li><a href="#">Link to query</a></li>
+        <li><a href="#">Link to query</a></li>
+      </ul>
+      <h3>Simple queries</h3>
+      <ul>
+        <li><a href="#">Link to query</a></li>
+        <li><a href="#">Link to query</a></li>
+        <li><a href="#">Link to query</a></li>
+        <li><a href="#">Link to query</a></li>
+        <li><a href="#">Link to query</a></li>
+      </ul>
+
+    </nav>
+
+  </div>
+
+  <div id="footer-wrapper">
+    <footer id="footer"><p>Introduction to database systems - Jiande Zhou, Joe Mengjie Zhao, Yvan Chevalley - Project </p></footer>
+  </div>
+
+</body>
+
+</html>
