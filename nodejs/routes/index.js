@@ -4,6 +4,7 @@ var _ = require('lodash')
 var oracledb = require('oracledb')
 var config = require('../config')
 var authorEntries = require('../models/author')
+var publicEntries = require('../models/Publication')
 
 var router = express.Router()
 
@@ -34,41 +35,45 @@ process.on('SIGINT',function(){
 });
 
 
-router.get('/', function(req, res) {
-	res.render('index', {})
-})
+router.get('/', function(req, res) {   res.render('index', {})   }   )
 
 router.get('/queryPage', function(req, res) {
   console.log(req.query)
   var type = req.query.category
   if (type == 'author') {
+
   	res.render('query', {entries: JSON.stringify(authorEntries)})
   }
-  else if (type == 'book') {
-    // TODO: add model/book.js
-    // res.render('query', {entries: JSON.stringify(bookEntries)})
+  else if (type == 'publication') {
+    //TODO: add model/book.js
+    res.render('query', {entries: JSON.stringify(publicEntries)})
   }
 })
 
 router.get('/query', function(req, res) {
-  console.log(req.query)
+
+	console.log(req.query)
+
   var query = getValidQuery(req.query)
   console.log(query)
+
   var condiArr = []
-  _.each(query, function(value, key) {
-    condiArr.push(key + ' = ' + value)
-  })
+
+	_.each(	query, function(value, key) {console.log(key); console.log(value); condiArr.push(key + ' = ' + value)} )
+
   console.log(condiArr.join(' AND '))
-  router.connection.execute(
-    'SELECT * FROM AUTHOR WHERE ' + condiArr.join(' AND '),
-    [],  // bind value for :id
-    { outFormat: oracledb.OBJECT },
-    function(err, result)
+
+	router.connection.execute(
+															// bind value for :id
+    'SELECT * FROM AUTHOR WHERE ' + condiArr.join(' AND '), [], { outFormat: oracledb.OBJECT },
+
+		function(err, result)
     {
       if (err) { console.error('Error: ' + err.message); return; }
       console.log(result.rows);
       res.render('result', {results: JSON.stringify(result.rows) })
     });
+
 })
 
 
