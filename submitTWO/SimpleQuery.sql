@@ -3,8 +3,6 @@ In query d) the public_pages from the table publication is not an INTEGER so we 
 also, public_page actually also contain Latin notation (like XVII) so maybe it could be good to add an attribute to the Publication table with only the Latin notation as a VARCHAR and the rest stays in public_pages but as a INT ?
 IN query e) The problem comes from the Currency_amout that has type VARCHAR but we schould change it to FLOAT.*/
 
-
-
 /* Query a) */
 
 SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication
@@ -55,9 +53,6 @@ where T.title_id=PC.title_id and PC.publication_id= P.publication_id and T.TITLE
 
 /*Note from Jiande: 1.for question 4 I dont know how to merge them into one output at the same time;
       2.It seems that for our data type definition, we should use "DATE" for every column that contains date. */
-
-
-
 
 /* Query e) */
 
@@ -116,3 +111,18 @@ FROM (SELECT A3.TITLE_ID /*, A3.NumAward, A3.NumReview*/, A3.NumAward+A3.NumRevi
             ON A1.TITLE_ID = A2.TITLE_ID) A3
       ORDER BY Somme DESC) A4, TITLE t1
 WHERE A4.TITLE_ID = t1.TITLE_ID AND ROWNUM <=3 ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
