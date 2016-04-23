@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Database Project</title>
-  <link rel = "stylesheet" type ="text/css" href = 'css/layout.css'>  
+  <link rel = "stylesheet" type ="text/css" href = 'css/layout.css'>
 </head>
 
 <body>
@@ -12,64 +12,68 @@
 
   <div id="container">
 
-    <main id="center" class="column">
-      <article>
-      
-        <h1>Author query</h1>
-        <div id='box'></div>
-        <script id="entries" type="text/json">{{{entries}}}</script>
-        <script type="text/javascript">
-          var entries = JSON.parse(document.getElementById('entries').innerHTML)
-          // console.log('entries: ')
-          // console.log(entries)
-          var box = document.getElementById('box')
-          var form = document.createElement('form');
-          form.action = 'query'
-          form.method = 'get'
-          Object.keys(entries).forEach(function(key){
-            var text = document.createTextNode(key + ': ');
-            var input = document.createElement('input');
-            input.name = key
-            input.type = 'text';
+          <main id="center" class="column">
+            <article>
+              <h1>Please input queries' keywards:</h1>
+              <div id='box'></div>
+              <script id="entries" type="text/json">{{{entries}}}</script>
+              <script type="text/javascript">
+                var entries = JSON.parse(document.getElementById('entries').innerHTML)
+                // console.log('entries: ')
+                // console.log(entries)
+                var box = document.getElementById('box')
+                var form = document.createElement('form');
+                form.action = 'query'
+                form.method = 'get'
+                Object.keys(entries).forEach(function(key){
+                  var text = document.createTextNode(key + ': ');
+                  var input = document.createElement('input');
+                  input.name = key
+                  input.type = 'text';
 
-            form.appendChild(text);
-            form.appendChild(input);
-            form.appendChild(document.createElement('br'))
-          });
-          var submit = document.createElement('input')
-          submit.type = 'submit'
-          submit.value = 'Submit'
-          form.appendChild(submit)
-          box.appendChild(form);
-        </script>
-      
-      </article>                
-    </main>
+                  form.appendChild(text);
+                  form.appendChild(input);
+                  form.appendChild(document.createElement('br'))
+                });
+                var submit = document.createElement('input')
+                submit.type = 'submit'
+                submit.value = 'Submit'
+                form.appendChild(submit)
+                box.appendChild(form);
+              </script>
+            </article>
+          </main>
 
-    <nav id="left" class="column">
-      <h3>Simple search into database</h3>
-      <ul>
-        <li><a href="/queryPage?category=author">Query Author</a></li>
-        <li><a href="#">Link to query</a></li>
-        <li><a href="#">Link to query</a></li>
-        <li><a href="#">Link to query</a></li>
-        <li><a href="#">Link to query</a></li>
-      </ul>
-      <h3>Simple queries</h3>
-      <ul>
-        <li><a href="#">Link to query</a></li>
-        <li><a href="#">Link to query</a></li>
-        <li><a href="#">Link to query</a></li>
-        <li><a href="#">Link to query</a></li>
-        <li><a href="#">Link to query</a></li>
-      </ul>
 
-    </nav>
+
+
+          <nav id="left" class="column">
+            <h3>Simple search into database</h3>
+            <ul>
+              <li><a href="/queryPage?category=author">Query Author</a></li>
+              <li><a href="/queryPage?category=publication">Query Publication</a></li>
+              <li><a href="/queryPage?category=title">Query Title</a></li>
+              <li><a href="#">Link to query</a></li>
+              <li><a href="#">Link to query</a></li>
+            </ul>
+
+
+
+            <h3>Simple queries</h3>
+            <ul>
+              <li><a href="/simplePage?category=a">First simple query</a></li>
+              <li><a href="#">Link to query</a></li>
+              <li><a href="#">Link to query</a></li>
+              <li><a href="#">Link to query</a></li>
+              <li><a href="#">Link to query</a></li>
+            </ul>
+
+          </nav>
 
   </div>
 
   <div id="footer-wrapper">
-    <footer id="footer"><p>Introduction to database systems - Jiande Zhou, Joe Mengjie Zhao, Yvan Chevalley - Project </p></footer>
+    <footer id="footer"><p>Introduction to database systems - Jiande Zhou, Mengjie Zhao, Yvan Chevalley - Project </p></footer>
   </div>
 
 </body>
