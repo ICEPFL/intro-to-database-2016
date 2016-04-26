@@ -107,10 +107,8 @@ router.get('/simpleB', function(req, res) {
 	console.log('this is the results!!!')
   console.log(result)
 	router.connection.execute(
-		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
-						'FROM Publication P, Publication_authors PA' +
-													' WHERE P.publication_id=PA.publication_id'+
-														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
+		'SELECT A1.author_name FROM Author A1' +
+				' WHERE A1.author_id IN ( SELECT A2.author_id FROM (SELECT DISTINCT PA.author_id FROM Publication_authors PA GROUP BY PA.author_id ORDER BY count(*) DESC ) A2 WHERE ROWNUM <11 )',
 
 		function(err, result)
     { if (err) { console.error('Error: ' + err.message); return; }
