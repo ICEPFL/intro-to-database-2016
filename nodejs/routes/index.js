@@ -32,17 +32,15 @@ oracledb.getConnection(config.oracledb, function(err, connection) {
   if (err) { console.error('Error: ' + err.message); return; }
   router.connection = connection
 })
-process.on('SIGINT',function(){
-    process.exit(0);
-});
+
+process.on('SIGINT',function(){ process.exit(0); });
 
 
-router.get('/', function(req, res) {   res.render('index', {})   }   )
+router.get('/', function(req, res) { res.render('index', {})});
 
 router.get('/queryPage', function(req, res) {
   console.log(req.query)
   var type = req.query.category
-
 	if (type == 'author') {
   	res.render('query', {entries: JSON.stringify(authorEntries)})
   }
@@ -77,35 +75,88 @@ router.get('/query', function(req, res) {
 
 })
 
-router.get('/simplePage', function(req, res) {
-  console.log(req.query)
-  var type = req.query.category
+// router.get('/simplePage', function(req, res) {
+//   console.log(req.query)
+//   var type = req.query.category
+// 	if (type == 'A') {
+//   	res.render('simpleA');//, {entries: JSON.stringify(year_numPublication)})
+//   }
+// })
 
-	if (type == 'a') {
-  	res.render('results', {entries: JSON.stringify(year_numPublication)})
-  }
-
-})
-
-router.get('/simple', function(req, res) {
+router.get('/simpleA', function(req, res) {
 	console.log(req.category)
-  var results = getValidQuery(req.category)
-  console.log(results)
+  var result = getValidQuery(req.category)
+  //console.log(result)
 	router.connection.execute(
-		'	SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
+		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
 						'FROM Publication P, Publication_authors PA' +
 													' WHERE P.publication_id=PA.publication_id'+
-														' GROUP BY  EXTRACT(YEAR FROM P.public_date);',
+														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
 
 		function(err, result)
     { if (err) { console.error('Error: ' + err.message); return; }
-      console.log(result.rows);
-      res.render('result', {results: JSON.stringify(result.rows) })
+    //  console.log(result.rows);
+      res.render('simpleResults', {results: JSON.stringify(result.rows) })
     });
 
 })
 
+router.get('/simpleB', function(req, res) {
+	console.log(req.category)
+  var result = getValidQuery(req.category)
+	console.log('this is the results!!!')
+  console.log(result)
+	router.connection.execute(
+		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
+						'FROM Publication P, Publication_authors PA' +
+													' WHERE P.publication_id=PA.publication_id'+
+														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
 
+		function(err, result)
+    { if (err) { console.error('Error: ' + err.message); return; }
+      console.log(result.rows);
+      res.render('simpleResults', {results: JSON.stringify(result.rows) })
+    });
+
+})
+
+router.get('/simpleC', function(req, res) {
+	console.log(req.category)
+  var result = getValidQuery(req.category)
+	console.log('this is the results!!!')
+  console.log(result)
+	router.connection.execute(
+		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
+						'FROM Publication P, Publication_authors PA' +
+													' WHERE P.publication_id=PA.publication_id'+
+														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
+
+		function(err, result)
+    { if (err) { console.error('Error: ' + err.message); return; }
+      console.log(result.rows);
+      res.render('simpleResults', {results: JSON.stringify(result.rows) })
+    });
+
+})
+
+router.get('/simpleD', function(req, res) {
+	console.log(req.category)
+  var result = getValidQuery(req.category)
+	console.log('this is the results!!!')
+  console.log(result)
+	router.connection.execute(
+		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
+						'FROM Publication P, Publication_authors PA' +
+													' WHERE P.publication_id=PA.publication_id'+
+														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
+
+		function(err, result)
+    { if (err) { console.error('Error: ' + err.message); return; }
+      console.log(result.rows);
+      res.render('simpleResults', {results: JSON.stringify(result.rows) })
+    });
+
+})
 
 
 module.exports = router
