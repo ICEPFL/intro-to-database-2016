@@ -124,10 +124,15 @@ router.get('/simpleC', function(req, res) {
 	console.log('this is the results!!!')
   console.log(result)
 	router.connection.execute(
-		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
-						'FROM Publication P, Publication_authors PA' +
-													' WHERE P.publication_id=PA.publication_id'+
-														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
+		'SELECT A1.AUTHOR_NAME AS YOUNGEST, A3.AUTHOR_NAME AS OLDEST'+
+		' FROM (SELECT DISTINCT  A2.AUTHOR_NAME, EXTRACT(YEAR FROM A2.BIRTH_DATE) AS Years, EXTRACT (MONTH FROM A2.BIRTH_DATE) AS Months ,EXTRACT(DAY FROM A2.BIRTH_DATE)AS Days'+
+		        ' FROM AUTHOR A2, Publication_authors PA, Publication P'+
+		        ' WHERE A2.Author_ID = PA.author_id and PA.publication_id= P.publication_id and extract(year from P.public_date)= \'2010\' AND A2.BIRTH_DATE IS NOT NULL'+
+		        ' ORDER BY Years DESC, Months DESC, Days DESC) A1,'+
+		        ' (SELECT DISTINCT  A2.AUTHOR_NAME, EXTRACT(YEAR FROM A2.BIRTH_DATE) AS Years, EXTRACT (MONTH FROM A2.BIRTH_DATE) AS Months ,EXTRACT(DAY FROM A2.BIRTH_DATE)AS Days'+
+		        ' FROM AUTHOR A2, Publication_authors PA, Publication P'+
+		        ' WHERE A2.Author_ID = PA.author_id and PA.publication_id= P.publication_id and extract(year from P.public_date)= \'2010\' AND A2.BIRTH_DATE IS NOT NULL'+
+		        ' ORDER BY Years ASC, Months ASC, Days ASC) A3 WHERE ROWNUM = 1',
 
 		function(err, result)
     { if (err) { console.error('Error: ' + err.message); return; }
@@ -137,24 +142,24 @@ router.get('/simpleC', function(req, res) {
 
 })
 
-router.get('/simpleD', function(req, res) {
-	console.log(req.category)
-  var result = getValidQuery(req.category)
-	console.log('this is the results!!!')
-  console.log(result)
-	router.connection.execute(
-		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
-						'FROM Publication P, Publication_authors PA' +
-													' WHERE P.publication_id=PA.publication_id'+
-														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
-
-		function(err, result)
-    { if (err) { console.error('Error: ' + err.message); return; }
-      console.log(result.rows);
-      res.render('simpleResults', {results: JSON.stringify(result.rows) })
-    });
-
-})
-
+// router.get('/simpleD', function(req, res) {
+// 	console.log(req.category)
+//   var result = getValidQuery(req.category)
+// 	console.log('this is the results!!!')
+//   console.log(result)
+// 	router.connection.execute(
+// 		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
+// 						'FROM Publication P, Publication_authors PA' +
+// 													' WHERE P.publication_id=PA.publication_id'+
+// 														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
+//
+// 		function(err, result)
+//     { if (err) { console.error('Error: ' + err.message); return; }
+//       console.log(result.rows);
+//       res.render('simpleResults', {results: JSON.stringify(result.rows) })
+//     });
+//
+// })
+//
 
 module.exports = router
