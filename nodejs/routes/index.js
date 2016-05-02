@@ -70,7 +70,7 @@ router.get('/query', function(req, res) {
 		function(err, result)
     {      if (err) { console.error('Error: ' + err.message); return; }
            console.log(result.rows);
-           res.render('result', {results: JSON.stringify(result.rows) })
+           res.render('result_try', {results: JSON.stringify(result.rows) })
     });
 
 })
@@ -96,7 +96,7 @@ router.get('/simpleA', function(req, res) {
 		function(err, result)
     { if (err) { console.error('Error: ' + err.message); return; }
     //  console.log(result.rows);
-      res.render('simpleResults', {results: JSON.stringify(result.rows) })
+      res.render('result_try', {results: JSON.stringify(result.rows) })
     });
 
 })
@@ -113,7 +113,7 @@ router.get('/simpleB', function(req, res) {
 		function(err, result)
     { if (err) { console.error('Error: ' + err.message); return; }
       console.log(result.rows);
-      res.render('simpleResults', {results: JSON.stringify(result.rows) })
+      res.render('result_try', {results: JSON.stringify(result.rows) })
     });
 
 })
@@ -137,7 +137,7 @@ router.get('/simpleC', function(req, res) {
 		function(err, result)
     { if (err) { console.error('Error: ' + err.message); return; }
       console.log(result.rows);
-      res.render('simpleResults', {results: JSON.stringify(result.rows) })
+      res.render('result_try', {results: JSON.stringify(result.rows) })
     });
 
 })
