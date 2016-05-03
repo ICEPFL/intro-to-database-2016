@@ -5,7 +5,6 @@ CREATE TABLE Language
         Language_Script     VARCHAR(128),
         PRIMARY KEY (Language_ID));
 		
-        
 CREATE TABLE Note
     (   noteID      INTEGER,
         NOTE        CLOB, 
