@@ -26,8 +26,10 @@
                 // console.log(entries)
                 var box = document.getElementById('box')
                 var form = document.createElement('form');
-                form.action = 'query'
+
+                form.action = 'queryPage?category=author'
                 form.method = 'get'
+                
                 Object.keys(entries).forEach(function(key){
                   var text = document.createTextNode(key + ': ');
                   var input = document.createElement('input');

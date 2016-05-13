@@ -34,8 +34,6 @@ oracledb.getConnection(config.oracledb, function(err, connection) {
 })
 
 process.on('SIGINT',function(){ process.exit(0); });
-
-
 router.get('/', function(req, res) { res.render('index', {})});
 
 router.get('/queryPage', function(req, res) {
@@ -57,6 +55,9 @@ router.get('/query', function(req, res) {
 	console.log(req.query)
   var query = getValidQuery(req.query)
   console.log(query)
+	console.log('balalbalabalbalab')
+	console.log(req.query.category)
+	console.log('balalbalabalbalab')
 
   var condiArr = []
 	_.each(	query, function(value, key) {console.log(key); console.log(value); condiArr.push(key + ' = ' + value)} )
@@ -65,7 +66,7 @@ router.get('/query', function(req, res) {
 
 	router.connection.execute(
 															// bind value for :id
-    'SELECT * FROM AUTHOR WHERE ' + condiArr.join(' AND '), [], { outFormat: oracledb.OBJECT },
+    'SELECT * FROM' + req.query.category + ' WHERE ' + condiArr.join(' AND '), [], { outFormat: oracledb.OBJECT },
 
 		function(err, result)
     {      if (err) { console.error('Error: ' + err.message); return; }
