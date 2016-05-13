@@ -1,14 +1,14 @@
 module.exports = {
-  AUTHOR_ID: 'id',
-  AUTHOR_NAME: 'string',
-  AUTHOR_LEGAL_NAME: 'string',
-  AUTHOR_LAST_NAME: 'string',
-  PSEUDONYM: 'string',
-  BIRTH_PLACE: 'string',
-  BIRTH_DATE: 'date',
-  DEATH_DATE: 'date',
-  EMAIL_ADDRESS: 'string',
-  AUTHOR_IMAGE: 'string',
-  LANGUAGE_ID: 'id',
-  NOTEID: 'id'
+  author_id: 'id',
+  author_name: 'string',
+  author_legal_name: 'string',
+  author_last_name: 'string',
+  pseudo_name: 'string',
+  birth_place: 'string',
+  birth_date: 'date',
+  death_date: 'date',
+  email_address: 'string',
+  author_image: 'string',
+  language_id: 'id',
+  note_id: 'id'
 }
