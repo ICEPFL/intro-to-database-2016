@@ -10,8 +10,14 @@ FROM Publication P, Publication_authors PA
 WHERE P.publication_id=PA.publication_id
 GROUP BY  EXTRACT(YEAR FROM P.public_date);
 
+SELECT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication
+FROM Publication P
+GROUP BY EXTRACT(YEAR FROM P.public_date); -- WE MAY NEED SKIP THE JOINT OPERATION TO SAVE TIME.
+--SOMETHING GOES WRONG WITHIN THE QUERY AND THE RESULTS ARE NOT ACCURATE.
 
 /* Query b) */
+--BOTH METHODS GIVE SAME RESULTS AND COMSUME ROUGTHLY EQUAL TIME (~0.18-0.2 SECONDS). THE SECOND METHOD
+--GIVES STRICT DESC ORDERED RESULTS AND USE NORMAL JOINT INSTEAD OF -IN-, AS THE TA SUGGESTED.
 SELECT A1.author_name
 FROM Author A1
 WHERE A1.author_id IN ( SELECT A2.author_id
@@ -20,8 +26,20 @@ WHERE A1.author_id IN ( SELECT A2.author_id
                                 GROUP BY PA.author_id
                                 ORDER BY count(*) DESC ) A2
                         WHERE ROWNUM <11 );
-                        
+						
+SELECT A1.author_name
+FROM Author A1
+INNER JOIN ( SELECT author_id AS AI
+             FROM ( SELECT DISTINCT PA.author_id
+                    FROM Publication_authors PA
+                    GROUP BY PA.author_id
+                    ORDER BY count(*) DESC ) 
+   				    WHERE ROWNUM <12 )
+ON A1.author_id = AI;
+
+
 /* Query c) */
+-- THE SPEED OF BOTH METHODS ARE ROUGHTLY THE SAME, WE CAN CHOOSE ANY ONE OF THEM.
 SELECT A1.AUTHOR_NAME AS YOUNGEST, A3.AUTHOR_NAME AS OLDEST
 FROM (  SELECT DISTINCT  A2.AUTHOR_NAME, EXTRACT(YEAR FROM A2.BIRTH_DATE) AS Years, EXTRACT (MONTH FROM A2.BIRTH_DATE) AS Months ,EXTRACT(DAY FROM A2.BIRTH_DATE)AS Days
         FROM AUTHOR A2, Publication_authors PA, Publication P
@@ -33,8 +51,24 @@ FROM (  SELECT DISTINCT  A2.AUTHOR_NAME, EXTRACT(YEAR FROM A2.BIRTH_DATE) AS Yea
         ORDER BY Years ASC, Months ASC, Days ASC) A3
 WHERE ROWNUM = 1;
 
-/* Query d) */
+SELECT AUTHOR_NAME, BIRTH_DATE
+FROM(
+      SELECT AUTHOR_NAME, BIRTH_DATE, AUTHOR_ID
+      FROM AUTHOR
+      INNER JOIN(
+                  SELECT AUTHOR_ID AS AI
+                  FROM PUBLICATION_AUTHORS PA
+                  INNER JOIN (  SELECT PUBLICATION_ID AS PID
+                                FROM PUBLICATION P
+                                WHERE EXTRACT(YEAR FROM P.PUBLIC_DATE) = 2010)
+                  ON PA.PUBLICATION_ID = PID)
+      ON AUTHOR.AUTHOR_ID = AI
+      WHERE BIRTH_DATE IS NOT NULL
+      ORDER BY BIRTH_DATE ASC) --CHANGE TO DESC FOR YOUNGEST WRITTER
+WHERE ROWNUM = 1;
 
+
+/* Query d) */
 select count(*)
 From Title T, Publication_content PC, Publication P
 where T.title_id=PC.title_id and PC.publication_id= P.publication_id and T.TITLE_GRAPH = 'YES' and 
@@ -49,16 +83,39 @@ select count(*)
 From Title T, Publication_content PC, Publication P
 where T.title_id=PC.title_id and PC.publication_id= P.publication_id and T.TITLE_GRAPH = 'YES' and 
       P.public_pages>=100;
-
+-- ON MY LAPTOP THESE QUERIES DO NOT WORK. WE MAY NEED DOUBLE CHECK OR CHANGE TO FOLLOWING ONE
+-- WE MAY NOT NEED TO COMBINE THEM AS ONE QUERY, SAME AS PREVIOUS QUERY	  
+	  
+SELECT COUNT(PUBLICATION_ID)
+FROM PUBLICATION
+INNER JOIN(
+            SELECT PUBC_ID
+            FROM PUBLICATION_CONTENT
+            INNER JOIN(
+                        SELECT TITLE_ID AS TI
+                        FROM TITLE
+                        WHERE TITLE_GRAPH = 'Yes')
+                        
+            ON PUBLICATION_CONTENT.TITLE_ID = TI)
+ON PUBLICATION_ID = PUBC_ID
+WHERE PUBLIC_PAGES_2 > 100;
 
 /*Note from Jiande: 1.for question 4 I dont know how to merge them into one output at the same time;
       2.It seems that for our data type definition, we should use "DATE" for every column that contains date. */
+
 
 /* Query e) */
 
 SELECT DISTINCT P.Publisher_name, AVG(U.currency_amont)
 FROM Publisher P, Publication U
 WHERE P.Publisher_ID = U.Publisher_ID AND U.Public_type = 'NOVEL' AND U.currency_sign='$' GROUP BY P.Publisher_name;
+-- ON MY LAPTOP THIS QUERY DOES NOT WORK. WE MAY NEED DOUBLE CHECK OR CHANGE TO FOLLOWING ONE
+-- WE MAY NOT NEED TO COMBINE THEM AS ONE QUERY, SAME AS PREVIOUS QUERY	  
+-- IF WE USE GROUP BY KEYWORDS, WE DO NOT NEED TO ENFORCE  THE DISTINCT KEYWORD
+SELECT PUBLISHER_ID, AVG(CURRENCY_AMOUT)
+FROM PUBLICATION
+WHERE PUBLIC_TYPE = 'NOVEL' AND CURRENCY_SIGN = '$'
+GROUP BY PUBLICATION.PUBLISHER_ID;
 
 /* Query f) */
 
