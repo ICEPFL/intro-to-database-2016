@@ -118,7 +118,8 @@ WHERE PUBLIC_TYPE = 'NOVEL' AND CURRENCY_SIGN = '$'
 GROUP BY PUBLICATION.PUBLISHER_ID;
 
 /* Query f) */
-
+--BOTH TWO QUERIES GIVE SAME RESULT, HOWEVER, I SUGGEST WE USE THE SECOND ONE SINCE THE TIMPORAL CONSUMPTION IS HALFED, 
+--COMPARED WITH THE FIRST ONE.
 SELECT a5.Author_Name
 FROM Author a5
 WHERE a5.AUTHOR_ID= ( SELECT pa.AUTHOR_ID
@@ -139,6 +140,29 @@ WHERE a5.AUTHOR_ID= ( SELECT pa.AUTHOR_ID
                                                                 WHERE t4.TAG_ID = al2.TAG_ID
                                                                 AND al2.TAG_NAME='science fiction')
                                                                 GROUP BY (pa2.Author_ID)));
+																
+SELECT AUTHOR_NAME
+FROM AUTHOR
+WHERE AUTHOR_ID = (SELECT AI
+                    FROM(
+                          SELECT AUTHOR_ID AS AI
+                          FROM PUBLICATION_AUTHORS
+                          INNER JOIN(
+                                      SELECT PUBLICATION_ID AS PUBLICAID
+                                      FROM PUBLICATION_CONTENT
+                                      INNER JOIN (
+                                                    SELECT TITLE_ID AS TITLEID
+                                                    FROM TITLE_TAGS
+                                                    INNER JOIN(
+                                                                SELECT TAG_ID AS TAGID
+                                                                FROM TAGS
+                                                                WHERE TAG_NAME = 'science fiction')
+                                                    ON TITLE_TAGS.TAG_ID = TAGID)
+                                      ON PUBLICATION_CONTENT.TITLE_ID = TITLEID)
+                          ON PUBLICATION_AUTHORS.PUBLICATION_ID = PUBLICAID
+                          GROUP BY AUTHOR_ID
+                          ORDER BY COUNT(PUBLICATION_ID) DESC)
+                    WHERE ROWNUM = 1);
 
 /* Query g) Alternative 1 */
 
@@ -168,8 +192,22 @@ FROM (SELECT A3.TITLE_ID /*, A3.NumAward, A3.NumReview*/, A3.NumAward+A3.NumRevi
             ON A1.TITLE_ID = A2.TITLE_ID) A3
       ORDER BY Somme DESC) A4, TITLE t1
 WHERE A4.TITLE_ID = t1.TITLE_ID AND ROWNUM <=3 ;
+-- QUERY RESULTS ARE DIFFERENT, WE MAY HAVE A DISCUSSION
 
-
+SELECT TITLE
+FROM TITLE
+ INNER JOIN(SELECT TI
+            FROM ( 
+                  SELECT TITLE_ID AS TI
+                  FROM(
+                        SELECT R.TITLE_ID, R.REVIEW_ID, TITLE_AWARDS.AWARD_ID
+                        FROM REVIEWS R
+                        INNER JOIN TITLE_AWARDS 
+                        ON R.TITLE_ID = TITLE_AWARDS.TITLE_ID)
+                  GROUP BY (TITLE_ID)
+                  ORDER BY (COUNT(TITLE_ID)) DESC)
+            WHERE ROWNUM < 4)
+ON TITLE.TITLE_ID = TI;
 
 
 
