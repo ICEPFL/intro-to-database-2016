@@ -3,10 +3,8 @@ var path = require('path')
 var _ = require('lodash')
 var oracledb = require('oracledb')
 var config = require('../config')
-var authorEntries = require('../models/author')
-var publicEntries = require('../models/Publication')
-var titleEntries = require('../models/title')
-var year_numPublication = require('../models/year_numPublication')
+
+var models = require('../models')
 
 var router = express.Router()
 
@@ -18,11 +16,25 @@ var ok = {
 	data: null
 }
 
-function getValidQuery(query) {
+function getValidQuery(query, models) {
   var res = {}
-  _.each(query, function(value, key) {
+  _.each(query, function(value, key)
+	{
     if (value) {
-      res[key] = value
+			if (!models) {
+	      res[key] = value
+			}
+			else {
+				if (models[key] == 'string') {
+					res[key] = "'" + value + "'"
+				}
+				else if (models[key] == 'date'){
+					res[key] = 'TO_DATE('+ "'" + value + "'" +"," + "'YYYY-MM-DD'" + ')'
+				}
+				else {
+					res[key] = value;
+				}
+			}
     }
   })
   return res
@@ -39,34 +51,26 @@ router.get('/', function(req, res) { res.render('index', {})});
 router.get('/queryPage', function(req, res) {
   console.log(req.query)
   var type = req.query.category
-	if (type == 'author') {
-  	res.render('query', {entries: JSON.stringify(authorEntries)})
-  }
-  else if (type == 'publication') {
-    res.render('query', {entries: JSON.stringify(publicEntries)})
-  }
-	else if (type == 'title') {
-		res.render('query', {entries: JSON.stringify(titleEntries)})
-	}
+	res.render('query', {entries: JSON.stringify(models[type])})
 
 })
 
-router.get('/query', function(req, res) {
+router.get('/query/:category', function(req, res) {
+	// console.log(req)
 	console.log(req.query)
-  var query = getValidQuery(req.query)
+	var category = req.params.category
+	console.log(models[category])
+  var query = getValidQuery(req.query, models[category].columns)
   console.log(query)
-	console.log('balalbalabalbalab')
-	console.log(req.query.category)
-	console.log('balalbalabalbalab')
-
   var condiArr = []
 	_.each(	query, function(value, key) {console.log(key); console.log(value); condiArr.push(key + ' = ' + value)} )
 
-  console.log(condiArr.join(' AND '))
+	var sqlStr = 'SELECT * FROM ' + category + ' WHERE ' + condiArr.join(' AND ')
+	console.log('sql string: ' + sqlStr);
 
 	router.connection.execute(
 															// bind value for :id
-    'SELECT * FROM' + req.query.category + ' WHERE ' + condiArr.join(' AND '), [], { outFormat: oracledb.OBJECT },
+    sqlStr, [], { outFormat: oracledb.OBJECT },
 
 		function(err, result)
     {      if (err) { console.error('Error: ' + err.message); return; }
@@ -79,45 +83,69 @@ router.get('/query', function(req, res) {
 router.get('/deletionPage', function(req, res) {
   console.log(req.query)
   var type = req.query.category
-	if (type == 'author') {
-  	res.render('query', {entries: JSON.stringify(authorEntries)})
-  }
-  else if (type == 'publication') {
-    res.render('query', {entries: JSON.stringify(publicEntries)})
-  }
-	else if (type == 'title') {
-		res.render('query', {entries: JSON.stringify(titleEntries)})
-	}
+	res.render('delete', {entries: JSON.stringify(models[type])})
 })
 
-router.get('/deletion', function(req, res) {
-	console.log(req.delete)
-  var deletion = getValidQuery(req.delete)
-  console.log(deletion)
-
+router.get('/deletion/:category', function(req, res) {
+	// console.log(req)
+	console.log(req.query)
+	var category = req.params.category
+	console.log(models[category])
+  var query = getValidQuery(req.query, models[category].columns)
+  console.log(query)
   var condiArr = []
-	_.each(	deletion, function(value, key) {console.log(key); console.log(value); condiArr.push(key + ' = ' + value)} )
+	_.each(	query, function(value, key) {console.log(key); console.log(value); condiArr.push(key + ' = ' + value)} )
 
-  console.log(condiArr.join(' AND '))
+	var sqlStr = 'DELETE FROM ' + category + ' WHERE ' + condiArr.join(' AND ')
+	console.log('sql string: ' + sqlStr);
 
 	router.connection.execute(
 															// bind value for :id
-    'SELECT * FROM AUTHOR WHERE ' + condiArr.join(' AND '), [], { outFormat: oracledb.OBJECT },
+    sqlStr, [], { outFormat: oracledb.OBJECT },
 
 		function(err, result)
     {      if (err) { console.error('Error: ' + err.message); return; }
+				   console.log(result)
            console.log(result.rows);
+					 console.log('testsett')
            res.render('result_try', {results: JSON.stringify(result.rows) })
     });
 
 })
-// router.get('/simplePage', function(req, res) {
-//   console.log(req.query)
-//   var type = req.query.category
-// 	if (type == 'A') {
-//   	res.render('simpleA');//, {entries: JSON.stringify(year_numPublication)})
-//   }
-// })
+
+router.get('/insertionPage', function(req, res) {
+  console.log(req.query)
+  var type = req.query.category
+	res.render('insert', {entries: JSON.stringify(models[type])})
+})
+
+router.get('/insertion/:category', function(req, res) {
+	console.log(req.query)
+	var category = req.params.category
+	console.log(models[category])
+  var query = getValidQuery(req.query, models[category].columns)
+  console.log(query)
+  var condiArr = []
+	_.each(	query, function(value, key) {console.log(key); console.log(value); condiArr.push(value)} )
+	var titles = []
+	_.each(	query, function(value, key) {console.log(key); console.log(value); titles.push(key)} )
+
+	var sqlStr = 'INSERT INTO ' + category + ' (' + titles.join(' , ') + ') ' + 'VALUES' + ' (' + condiArr.join(' , ') + ') '
+	console.log('sql string: ' + sqlStr);
+
+	router.connection.execute(
+															// bind value for :id
+    sqlStr, [], { outFormat: oracledb.OBJECT },
+
+		function(err, result)
+    {      if (err) { console.error('Error: ' + err.message); return; }
+				   console.log(result)
+           console.log(result.rows);
+					 console.log('testsett')
+           res.render('insert_result')
+    });
+
+})
 
 router.get('/simpleA', function(req, res) {
   //console.log(result)

@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <title>Database Project</title>
-  <link rel = "stylesheet" type ="text/css" href = 'css/layout.css'>
+  <link rel = "stylesheet" type ="text/css" href = '/css/layout.css'>
 
 </head>
 
@@ -21,15 +21,23 @@
               <div id='box'></div>
               <script id="entries" type="text/json">{{{entries}}}</script>
               <script type="text/javascript">
-                var entries = JSON.parse(document.getElementById('entries').innerHTML)
-                // console.log('entries: ')
-                // console.log(entries)
+                var models = JSON.parse(document.getElementById('entries').innerHTML)
+                var entries = models.columns
+                var category = models.category
+                console.log('models: ')
+                console.log(models)
                 var box = document.getElementById('box')
                 var form = document.createElement('form');
 
-                form.action = 'queryPage?category=author'
+                // form.action = 'query'
+                form.action = 'query' + '/' + category
                 form.method = 'get'
-                
+                // var input = document.createElement('input');
+                // input.name = 'category';
+                // input.type = 'hidden';
+                // input.value = category;
+                // form.appendChild(input);
+
                 Object.keys(entries).forEach(function(key){
                   var text = document.createTextNode(key + ': ');
                   var input = document.createElement('input');
@@ -56,10 +64,14 @@
             <h3>Simple search into database</h3>
             <ul>
               <li><a href="/queryPage?category=author">Query Author</a></li>
-              <li><a href="/queryPage?category=publication">Query Publication</a></li>
-              <li><a href="/queryPage?category=title">Query Title</a></li>
-              <li><a href="#">Link to query</a></li>
-              <li><a href="#">Link to query</a></li>
+      				<li><a href="/queryPage?category=publication">Query Publication</a></li>
+      				<li><a href="/queryPage?category=title">Query Title</a></li>
+      				<li><a href="/queryPage?category=publisher">Query Publisher</a></li>
+      				<li><a href="/queryPage?category=awards">Query Awards</a></li>
+      				<li><a href="/queryPage?category=tags">Query Tags</a></li>
+      				<li><a href="/queryPage?category=language">Query Languages</a></li>
+      				<li><a href="/queryPage?category=webpage">Query Webpages</a></li>
+      				<li><a href="/queryPage?category=note">Query Note</a></li>
             </ul>
 
 
@@ -75,13 +87,28 @@
 
             <h3>Deletion queries</h3>
       			<ul>
-      				<li><a href="/deletionPage?category=author"> Deletion to Author</a></li>
-              <li><a href="/deletionPage?category=publication">Deletion to Publication</a></li>
-      				<li><a href="/deletionPage?category=title">Deletion to Title</a></li>
-      				<li><a href="#">Link to query</a></li>
-      				<li><a href="#">Link to query</a></li>
+              <li><a href="/deletionPage?category=author"> Delete Author</a></li>
+      				<li><a href="/deletionPage?category=publication">Delete Publication</a></li>
+      				<li><a href="/deletionPage?category=title">Delete Title</a></li>
+      				<li><a href="/deletionPage?category=publisher">Delete Publisher</a></li>
+      				<li><a href="/deletionPage?category=awards">Delete Awards</a></li>
+      				<li><a href="/deletionPage?category=tags">Delete Tags</a></li>
+      				<li><a href="/deletionPage?category=language">Delete Languages</a></li>
+      				<li><a href="/deletionPage?category=webpage">Delete Webpages</a></li>
+      				<li><a href="/deletionPage?category=note">Delete Note</a></li>
       			</ul>
-
+            <h3>Insertion queries</h3>
+            <ul>
+              <li><a href="/insertionPage?category=author"> Insert Author</a></li>
+              <li><a href="/insertionPage?category=publication">Insert Publication</a></li>
+              <li><a href="/insertionPage?category=title">Insert Title</a></li>
+              <li><a href="/insertionPage?category=publisher">Insert Publisher</a></li>
+              <li><a href="/insertionPage?category=awards">Insert Awards</a></li>
+              <li><a href="/insertionPage?category=tags">Insert Tags</a></li>
+              <li><a href="/insertionPage?category=language">Insert Languages</a></li>
+              <li><a href="/insertionPage?category=webpage">Insert Webpages</a></li>
+              <li><a href="/insertionPage?category=note">Insert Note</a></li>
+            </ul>
           </nav>
 
   </div>
