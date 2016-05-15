@@ -108,7 +108,7 @@ router.get('/deletion/:category', function(req, res) {
 				   console.log(result)
            console.log(result.rows);
 					 console.log('testsett')
-           res.render('result_try', {results: JSON.stringify(result.rows) })
+           res.render('delete_results')
     });
 
 })
