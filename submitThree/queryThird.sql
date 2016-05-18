@@ -232,7 +232,19 @@ INNER JOIN(
 ON AUTHOR.AUTHOR_ID = AID
 WHERE BIRTH_DATE IS NOT NULL
 ORDER BY (BIRTH_DATE) DESC;
-
+-- Query K ----------------
+SELECT AVG(TIMES)
+FROM(
+      SELECT PSI, COUNT(*) AS TIMES
+      FROM(
+            SELECT PUBLICATION_ID, PSI
+            FROM PUBLICATION
+            INNER JOIN(
+                        SELECT PUB_SERIE_ID AS PSI
+                        FROM PUBLICATION_SERIES)
+            ON PUBLICATION.PUB_SERIE_ID = PSI)
+      GROUP BY (PSI));
+        
 -- Query O ----------------
 SELECT *
 FROM(
