@@ -1,22 +1,27 @@
 -- Query A ----------------
-SELECT CS, AVG(CA)
+-- results are the same but this is faster ---------
+SELECT  *
 FROM(
-        SELECT CURRENCY_SIGN AS CS, CURRENCY_AMOUT AS CA
-        FROM PUBLICATION
-        INNER JOIN(
-                    SELECT PUBLICATION_ID AS PID
-                    FROM PUBLICATION_CONTENT
-                    WHERE TITLE_ID = ( SELECT *
-                                       FROM(
-                                            SELECT TITLE_ID AS TID
-                                            FROM PUBLICATION_CONTENT
-                                            GROUP BY (TITLE_ID)
-                                            ORDER BY COUNT(*) DESC)
-                                       WHERE ROWNUM = 1))
-        ON PUBLICATION.PUBLICATION_ID = PID)
-GROUP BY (CS)
+        SELECT CS, AVG(CA) AS AMOUNT
+        FROM(
+                SELECT CURRENCY_SIGN AS CS, CURRENCY_AMOUT AS CA
+                FROM PUBLICATION
+                INNER JOIN(
+                            SELECT PUBLICATION_ID AS PID
+                            FROM PUBLICATION_CONTENT
+                            WHERE TITLE_ID = ( SELECT *
+                                               FROM(
+                                                    SELECT TITLE_ID AS TID
+                                                    FROM PUBLICATION_CONTENT
+                                                    GROUP BY (TITLE_ID)
+                                                    ORDER BY COUNT(*) DESC)
+                                               WHERE ROWNUM = 1))
+                ON PUBLICATION.PUBLICATION_ID = PID)
+        GROUP BY (CS))
+WHERE AMOUNT > 0;
 
 -- Query B ----------------
+--RESULTS ARE THE SAME, SPEED IS ROUGHTLY THE SAME ---
 SELECT SRIS_TITLE
 FROM TITLE_SERIES
 INNER JOIN(   SELECT *
@@ -33,6 +38,7 @@ INNER JOIN(   SELECT *
 ON TITLE_SERIES.TIT_SRIS_ID = TITSERID;
 
 -- Query C ----------------
+-- RESULTS ARE DIFFERENT ---
 SELECT AUTHOR_NAME, AUTHOR_ID
 FROM AUTHOR
 WHERE AUTHOR_ID = (
@@ -68,7 +74,8 @@ WHERE AUTHOR_ID = (
               WHERE ROWNUM = 1);
 
 -- Query D ----------------
-SELECT PUBLISHER_NAME, PBLSID
+-- RESULTS AND SPEED ARE ROUGHTLY SAME  ----
+SELECT PUBLISHER_NAME--, PBLSID
 FROM PUBLISHER
 INNER JOIN  (SELECT PBLSID
                 FROM(
@@ -83,6 +90,7 @@ INNER JOIN  (SELECT PBLSID
 ON PUBLISHER.PUBLISHER_ID = PBLSID;
 
 -- Query E ----------------
+-- RESULTS AND THE SPPED ARE ROUGHTLY THE SAME
 SELECT TITLE
 FROM TITLE
 WHERE TITLE_ID = (
@@ -103,6 +111,7 @@ WHERE TITLE_ID = (
                             ORDER BY COUNT(*) DESC)
                     WHERE ROWNUM = 1);
 -- Query F ----------------
+-- ASK ---
 SELECT TITLE_TYPE, LANGUAGE_ID, RR
 FROM (
       SELECT TITLE_TYPE, LANGUAGE_ID, COUNT(*), ROW_NUMBER() OVER(PARTITION BY LANGUAGE_ID ORDER BY COUNT(*)) AS RR
@@ -113,15 +122,38 @@ FROM (
       GROUP BY(TITLE_TYPE, LANGUAGE_ID)
       ORDER BY LANGUAGE_ID DESC, COUNT(*) DESC  );
 -- Query G ----------------
-SELECT YR, PUBLISHER_ID, COUNT(*)
+SELECT YR, SUM(SUMNUMAUTHOR)/SUM(NUMPUBLISHER)
 FROM(
-      SELECT AUTHOR_ID, YR, PUBLISHER_ID
-      FROM PUBLICATION_AUTHORS
-      INNER JOIN(
-                  SELECT  PUBLICATION_ID AS PBID, EXTRACT(YEAR FROM PUBLICATION.PUBLIC_DATE) AS YR, PUBLISHER_ID
-                  FROM PUBLICATION )
-      ON PUBLICATION_AUTHORS.PUBLICATION_ID = PBID)
-GROUP BY (YR, PUBLISHER_ID);
+      SELECT YR, NUMAUTHOR, COUNT(*) AS NUMPUBLISHER,SUM(NUMAUTHOR) AS SUMNUMAUTHOR
+      FROM(
+            SELECT YR, PUBLISHER_ID, COUNT(*) AS NUMAUTHOR
+            FROM(
+                  SELECT AUTHOR_ID, YR, PUBLISHER_ID
+                  FROM PUBLICATION_AUTHORS
+                  INNER JOIN(
+                              SELECT  PUBLICATION_ID AS PBID, EXTRACT(YEAR FROM PUBLICATION.PUBLIC_DATE) AS YR, PUBLISHER_ID
+                              FROM PUBLICATION )
+                  ON PUBLICATION_AUTHORS.PUBLICATION_ID = PBID)
+            GROUP BY (YR, PUBLISHER_ID))
+      GROUP BY (YR, NUMAUTHOR))
+GROUP BY (YR);
+
+SELECT YR, NUMA/NUMP
+FROM(
+      SELECT YR, COUNT(DISTINCT AUTHOR_ID) AS NUMA, COUNT(DISTINCT PUBLISHER_ID) AS NUMP
+      FROM(
+                  SELECT YR, PUBLISHER_ID, AUTHOR_ID
+                  FROM(
+                        SELECT  AUTHOR_ID, YR, PUBLISHER_ID
+                        FROM PUBLICATION_AUTHORS
+                        INNER JOIN(
+                                    SELECT  PUBLICATION_ID AS PBID, EXTRACT(YEAR FROM PUBLICATION.PUBLIC_DATE) AS YR, PUBLISHER_ID
+                                    FROM PUBLICATION )
+                        ON PUBLICATION_AUTHORS.PUBLICATION_ID = PBID)
+                  GROUP BY (YR, PUBLISHER_ID, AUTHOR_ID))
+      GROUP BY YR)
+WHERE NUMP > 0;
+
 --- check correctness  of G ----
 SELECT COUNT(*)
 FROM(
@@ -244,7 +276,7 @@ FROM(
                         FROM PUBLICATION_SERIES)
             ON PUBLICATION.PUB_SERIE_ID = PSI)
       GROUP BY (PSI));
-        
+
 -- Query O ----------------
 SELECT *
 FROM(
