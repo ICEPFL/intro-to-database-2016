@@ -3,10 +3,9 @@ var path = require('path')
 var _ = require('lodash')
 var oracledb = require('oracledb')
 var config = require('../config')
-
 var models = require('../models')
-
 var router = express.Router()
+var searching = require('../models/searchAuthor')
 
 var ok = {
 	meta: {
@@ -39,6 +38,15 @@ function getValidQuery(query, models) {
   })
   return res
 }
+function getValidSearch(query, models) {
+  var res = {}
+  _.each(query, function(value, key)
+	{
+			key = 'author_name'
+			res[key] = value;
+		})
+  return res
+}
 
 oracledb.getConnection(config.oracledb, function(err, connection) {
   if (err) { console.error('Error: ' + err.message); return; }
@@ -47,6 +55,10 @@ oracledb.getConnection(config.oracledb, function(err, connection) {
 
 process.on('SIGINT',function(){ process.exit(0); });
 router.get('/', function(req, res) { res.render('index', {})});
+
+
+
+
 
 router.get('/queryPage', function(req, res) {
   console.log(req.query)
@@ -79,6 +91,45 @@ router.get('/query/:category', function(req, res) {
     });
 
 })
+
+router.get('/searchPage', function(req, res) {
+  console.log(req.query)
+  // var type = req.query.category
+	res.render('searchAuthor', {entries: JSON.stringify(searching)})
+
+})
+
+router.get('/search/searchAuthor', function(req, res) {
+	// console.log(req)
+	// console.log('hahahahahah')
+	console.log(req.query)
+	var category = 'searchAuthor'
+	console.log(models[category])
+  var query = getValidSearch(req.query, 'models[category].columns')
+	console.log('thi si query!')
+  console.log(query)
+  var condiArr = []
+	_.each(	query, function(value, key) {console.log(key); console.log(value); condiArr.push(value)} )
+
+	var sqlStr = 'SELECT * FROM author' + ' WHERE author_legal_name like ' + '\'' +condiArr + '\'' + ' OR author_name like ' + '\'' + condiArr + '\''
+					 		+ ' OR author_last_name like ' + '\'' + condiArr + '\'' + ' OR author_last_name like ' + '\'' + condiArr + '\'' + ' OR pseudonym like ' + '\'' + condiArr + '\''
+							+ ' OR birth_place like ' + '\'' + condiArr + '\''
+	console.log('sql string: ' + sqlStr);
+
+	router.connection.execute(
+															// bind value for :id
+    sqlStr, [], { outFormat: oracledb.OBJECT },
+
+		function(err, result)
+    {      if (err) { console.error('Error: ' + err.message); return; }
+          //  console.log(result.rows);
+           res.render('result_try', {results: JSON.stringify(result.rows) })
+    });
+
+})
+
+
+
 
 router.get('/deletionPage', function(req, res) {
   console.log(req.query)
@@ -113,6 +164,14 @@ router.get('/deletion/:category', function(req, res) {
 
 })
 
+
+
+
+
+
+
+
+
 router.get('/insertionPage', function(req, res) {
   console.log(req.query)
   var type = req.query.category
@@ -146,6 +205,17 @@ router.get('/insertion/:category', function(req, res) {
     });
 
 })
+
+
+
+
+
+
+
+
+
+
+
 
 router.get('/simpleA', function(req, res) {
   //console.log(result)

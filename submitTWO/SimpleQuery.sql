@@ -86,19 +86,18 @@ where T.title_id=PC.title_id and PC.publication_id= P.publication_id and T.TITLE
 -- ON MY LAPTOP THESE QUERIES DO NOT WORK. WE MAY NEED DOUBLE CHECK OR CHANGE TO FOLLOWING ONE
 -- WE MAY NOT NEED TO COMBINE THEM AS ONE QUERY, SAME AS PREVIOUS QUERY	  
 	  
-SELECT COUNT(PUBLICATION_ID)
+SELECT COUNT(*)
 FROM PUBLICATION
 INNER JOIN(
-            SELECT PUBC_ID
+            SELECT PUBLICATION_ID AS PID
             FROM PUBLICATION_CONTENT
             INNER JOIN(
-                        SELECT TITLE_ID AS TI
+                        SELECT TITLE_ID AS TID
                         FROM TITLE
                         WHERE TITLE_GRAPH = 'Yes')
-                        
-            ON PUBLICATION_CONTENT.TITLE_ID = TI)
-ON PUBLICATION_ID = PUBC_ID
-WHERE PUBLIC_PAGES_2 > 100;
+            ON PUBLICATION_CONTENT.TITLE_ID = TID)
+ON PUBLICATION.PUBLICATION_ID = PID
+WHERE PUBLIC_PAGES_2 < 50
 
 /*Note from Jiande: 1.for question 4 I dont know how to merge them into one output at the same time;
       2.It seems that for our data type definition, we should use "DATE" for every column that contains date. */
@@ -196,18 +195,19 @@ WHERE A4.TITLE_ID = t1.TITLE_ID AND ROWNUM <=3 ;
 
 SELECT TITLE
 FROM TITLE
- INNER JOIN(SELECT TI
-            FROM ( 
-                  SELECT TITLE_ID AS TI
-                  FROM(
-                        SELECT R.TITLE_ID, R.REVIEW_ID, TITLE_AWARDS.AWARD_ID
-                        FROM REVIEWS R
-                        INNER JOIN TITLE_AWARDS 
-                        ON R.TITLE_ID = TITLE_AWARDS.TITLE_ID)
-                  GROUP BY (TITLE_ID)
-                  ORDER BY (COUNT(TITLE_ID)) DESC)
+INNER JOIN(
+            SELECT TITLE_ID AS TIDD
+            FROM(
+                    SELECT TITLE_ID, COUNT(DISTINCT REVIEW_ID)+COUNT(DISTINCT AWARD_ID) AS SUMMATION
+                    FROM(
+                            SELECT R.TITLE_ID, R.REVIEW_ID, TITLE_AWARDS.AWARD_ID
+                            FROM REVIEWS R
+                            INNER JOIN TITLE_AWARDS 
+                            ON R.TITLE_ID = TITLE_AWARDS.TITLE_ID)
+                    GROUP BY TITLE_ID
+                    ORDER BY SUMMATION DESC)
             WHERE ROWNUM < 4)
-ON TITLE.TITLE_ID = TI;
+ON TITLE.TITLE_ID = TIDD;
 
 
 
