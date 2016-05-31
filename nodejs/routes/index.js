@@ -6,6 +6,7 @@ var config = require('../config')
 var models = require('../models')
 var router = express.Router()
 var searching = require('../models/searchAuthor')
+var searchingPub = require('../models/searchPublication')
 
 var ok = {
 	meta: {
@@ -38,11 +39,22 @@ function getValidQuery(query, models) {
   })
   return res
 }
-function getValidSearch(query, models) {
+function getValidSearchAuthor(query, models) {
   var res = {}
   _.each(query, function(value, key)
 	{
 			key = 'author_name'
+			res[key] = value;
+		})
+  return res
+}
+getValidSearchPublic
+
+function getValidSearchPublic(query, models) {
+  var res = {}
+  _.each(query, function(value, key)
+	{
+			key = 'public_title'
 			res[key] = value;
 		})
   return res
@@ -55,9 +67,6 @@ oracledb.getConnection(config.oracledb, function(err, connection) {
 
 process.on('SIGINT',function(){ process.exit(0); });
 router.get('/', function(req, res) { res.render('index', {})});
-
-
-
 
 
 router.get('/queryPage', function(req, res) {
@@ -105,7 +114,7 @@ router.get('/search/searchAuthor', function(req, res) {
 	console.log(req.query)
 	var category = 'searchAuthor'
 	console.log(models[category])
-  var query = getValidSearch(req.query, 'models[category].columns')
+  var query = getValidSearchAuthor(req.query, 'models[category].columns')
 	console.log('thi si query!')
   console.log(query)
   var condiArr = []
@@ -127,7 +136,6 @@ router.get('/search/searchAuthor', function(req, res) {
     });
 
 })
-
 
 
 
@@ -271,25 +279,5 @@ router.get('/simpleC', function(req, res) {
     });
 
 })
-
-// router.get('/simpleD', function(req, res) {
-// 	console.log(req.category)
-//   var result = getValidQuery(req.category)
-// 	console.log('this is the results!!!')
-//   console.log(result)
-// 	router.connection.execute(
-// 		'SELECT DISTINCT EXTRACT(YEAR FROM P.public_date) AS Year, count(P.publication_id) AS Numb_Publication ' +
-// 						'FROM Publication P, Publication_authors PA' +
-// 													' WHERE P.publication_id=PA.publication_id'+
-// 														' GROUP BY  EXTRACT(YEAR FROM P.public_date)',
-//
-// 		function(err, result)
-//     { if (err) { console.error('Error: ' + err.message); return; }
-//       console.log(result.rows);
-//       res.render('simpleResults', {results: JSON.stringify(result.rows) })
-//     });
-//
-// })
-//
 
 module.exports = router

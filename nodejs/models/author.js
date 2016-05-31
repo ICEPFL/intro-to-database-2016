@@ -5,7 +5,7 @@ module.exports = {
     author_name: 'string',
     author_legal_name: 'string',
     author_last_name: 'string',
-    pseudo_name: 'string',
+    pseudonym: 'string',
     birth_place: 'string',
     birth_date: 'date',
     death_date: 'date',
