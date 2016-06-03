@@ -120,7 +120,7 @@ FROM(
                                 SELECT * FROM(
                                               SELECT PUBLICATION_ID AS PID, PUBLISHER_ID, EXTRACT(YEAR FROM PUBLIC_DATE) AS YR
                                               FROM PUBLICATION)
-                                WHERE YR IS NOT NULL AND PUBLISHER_ID IS NOT NULL)
+                                WHERE YR IS NOT NULL AND PUBLISHER_ID IS NOT NULL) --I think it is possible here to put the where clause inside the first select ??
                   ON PUBLICATION_AUTHORS.PUBLICATION_ID = PID)
             GROUP BY (PUBLISHER_ID, YR))
       GROUP BY YR)
@@ -145,20 +145,21 @@ WHERE ROWNUM =1;
 -- Query i ----------------
 SELECT award_catename,author_name
 FROM ( (SELECT award_cateid, author_id
-        FROM ( SELECT award_cateid, author_id, DENSE_RANK() over (PARTITION BY award_cateid ORDER BY COUNT(author_id) DESC) As rank1
-               FROM ( SELECT Award_id, author_id, award_cateid
-                      FROM ((select Award_id, author_id
-                            from  ((select title_id, author_id
-                                    from ((select Publication_id, author_id
-                                          from (Author JOIN Publication_authors USING (Author_id)))
-                                                JOIN Publication_content USING (Publication_id))
-                                           JOIN Title_awards USING (title_id))
-                                    JOIN Title_awards USING (title_id)))
-                            JOIN Awards USING (Award_id)))
-               GROUP BY award_cateid, author_id )
-         WHERE rank1<4 ) A1
-         JOIN Award_categories USING (award_cateid)
-         JOIN Author USING (author_id))
+        FROM (  SELECT award_cateid, author_id, DENSE_RANK() over (PARTITION BY award_cateid ORDER BY COUNT(author_id) DESC) As rank1
+                FROM (  SELECT Award_id, author_id, award_cateid
+                        FROM (( select Award_id, author_id
+                                from  ((select title_id, author_id
+                                        from (( select Publication_id, author_id
+                                                from (Author 
+                                                JOIN Publication_authors USING (Author_id)))
+                                        JOIN Publication_content USING (Publication_id))
+                                JOIN Title_awards USING (title_id))
+                        JOIN Title_awards USING (title_id)))
+                JOIN Awards USING (Award_id)))
+        GROUP BY award_cateid, author_id )
+        WHERE rank1<4 ) A1
+JOIN Award_categories USING (award_cateid)
+JOIN Author USING (author_id))
 
 -- Query J ----------------
 SELECT  DISTINCT AUTHOR_ID, AUTHOR_NAME, BIRTH_DATE --,PUBID, PUBLIC_TYPE,
