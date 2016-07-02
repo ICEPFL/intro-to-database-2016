@@ -1,2 +1,3 @@
-## Related files of IDBS 2016 course at EPFL.
- 
+ SQL, JS and parsing codes for the course *Introduction to Database Systems* at EPFL. 
+
+
